@@ -1,0 +1,52 @@
+import sys
+import pandas
+import numpy
+
+univ_name = sys.argv[1] if len(sys.argv) >=2 else print('Invalid Command, type "-h" for help.')
+
+df = pandas.read_csv('universities.csv')
+school_list = list(df['School'].dropna())
+
+SCHOOL = df['School'].dropna()
+MEDIAN = df['Median_SAT_std'].dropna()
+ACCEPT = df['Acceptance_Rate_Perc_STD'].dropna()
+EXPEND = df['Expenditures_per_Student_STD'].str.replace('$','').str.replace('-','').dropna().astype(float)
+GRAD = df['Graduation_perc_STD'].dropna()
+
+if univ_name == '-l':
+    for name in school_list:
+        print (name)
+    print ('')
+    univ_name = input('Type University Name: ')
+
+if univ_name == '-h':
+    print ('This will compute the Euclidean score for the univeristy name provided by the user.')
+    print ('It will display the name of university along with the distance closed to the one provided based on the score.')
+    print ('')
+    print ('For a list of univeristy, use command "-l" to choose from list.')
+    print ('The name of university can be directly inputted as command in this format (include quotation): "University Name"')
+
+if SCHOOL.str.contains(univ_name).any():
+    euclidean_score = numpy.linalg.norm(MEDIAN - ACCEPT - EXPEND - GRAD)
+    print (euclidean_score)
+
+
+    df['School'] = df['School'].dropna()
+    df['Median_SAT_std'] = df['Median_SAT_std'].dropna()
+    df['Acceptance_Rate_Perc_STD'] = df['Acceptance_Rate_Perc_STD'].dropna()
+    df['Expenditures_per_Student_STD'] = df['Expenditures_per_Student_STD'].str.replace('$','').str.replace('-','').dropna().astype(float)
+    df['Graduation_perc_STD'] = df['Graduation_perc_STD'].dropna()
+
+    #if SCHOOL.str.contains(univ_name).any():
+        #euclidean_score = numpy.linalg.norm(MEDIAN - ACCEPT - EXPEND - GRAD)
+        #print ('Match')
+
+    columns = list(df.columns)
+    columns.remove('School')
+    columns.remove('Type')
+    columns.remove('Median_SAT')
+    columns.remove('Acceptance_Rate_Perc')
+    columns.remove('Expenditures_per_Student')
+    columns.remove('Graduation_perc')
+    columns.remove('Distance')
+    df[columns].dropna()
